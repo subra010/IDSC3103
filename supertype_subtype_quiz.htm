@@ -289,20 +289,20 @@
             }
         },
         {
-            question: "What's the difference between total and partial specialization?",
+            question: "How do you convert a supertype/subtype relationship to relational tables?",
             options: [
-                "Total means more subtypes than partial",
-                "Total means every supertype instance MUST be in a subtype; Partial means instances MAY NOT be in any subtype",
-                "Total means the supertype has all attributes; Partial means subtypes have most attributes",
-                "Total means disjoint; Partial means overlapping"
+                "Create one table for the supertype only, with columns for all subtype attributes",
+                "Create one table for each subtype only, duplicating common attributes in each",
+                "Create one table for the supertype and one table for each subtype, linking them with PK/FK",
+                "Create an associative table to link the supertype and subtypes"
             ],
-            answer: 1,
+            answer: 2,
             feedback: {
-                correct: "Correct! TOTAL specialization (double lines) requires every supertype instance to belong to a subtype. PARTIAL (single line) allows instances to exist only at the supertype level.",
+                correct: "Correct! Create one table for the supertype containing common attributes, and one table for EACH subtype containing specialized attributes. The supertype's primary key becomes BOTH the primary key AND a foreign key in each subtype table. Example: EMPLOYEE(Emp_ID, Name, Hire_Date) → HOURLY(Emp_ID, Hourly_Rate, Hours_Worked) and SALARIED(Emp_ID, Annual_Salary, Bonus_Eligible), where Emp_ID in subtypes is PK and FK to EMPLOYEE.",
                 incorrect: [
-                    "The number of subtypes is irrelevant to the specialization constraint.",
-                    "This refers to attribute distribution, not instance membership.",
-                    "These are two different types of constraints. Line style (Total/Partial) is independent of d/o (Disjoint/Overlapping)."
+                    "This creates a NULL-heavy single table approach. Hourly employees would have NULL for Annual_Salary/Bonus_Eligible, while salaried employees would have NULL for Hourly_Rate/Hours_Worked. Defeats the purpose of supertype/subtype!",
+                    "You'd be duplicating Name, Hire_Date, and other common attributes in EVERY subtype table! That's redundant and creates update anomalies. The whole point of supertypes is to avoid this duplication.",
+                    "Associative tables are for M:N relationships, not supertype/subtype! This is a 1:1 relationship—each subtype instance corresponds to exactly one supertype instance."
                 ]
             }
         },
@@ -468,3 +468,4 @@
 
 </body>
 </html>
+
