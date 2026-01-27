@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supertype/Subtype Relationships Quiz</title>
+    <style>
+        :root {
+            --uom-maroon: #7a0019;
+            --uom-gold: #ffcc33;
+            --uom-gold-hover: #ffde7a;
+            --bg: #f4f4f4;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #16a34a;
+            --incorrect: #dc2626;
+            --border: #d1d5db;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            background-color: var(--uom-maroon);
+            color: var(--uom-gold);
+            text-align: center;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+            border-bottom: 5px solid var(--uom-gold);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--uom-maroon);
+        }
+
+        .erd-box {
+            background: #f9f9f9;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            white-space: pre;
+            overflow-x: auto;
+            text-align: center;
+            border: 1px solid var(--border);
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #fff9e6;
+            border-color: var(--uom-gold);
+        }
+
+        .option-btn.selected {
+            border-color: var(--uom-maroon);
+            background-color: #fff9e6;
+        }
+
+        .option-btn.correct {
+            border-color: var(--correct);
+            background-color: #f0fdf4;
+            color: var(--correct);
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--incorrect);
+            background-color: #fef2f2;
+            color: var(--incorrect);
+        }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            border-left: 5px solid transparent;
+        }
+
+        #next-btn, #restart-btn {
+            margin-top: 25px;
+            background: var(--uom-maroon);
+            color: var(--uom-gold);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        #next-btn:hover, #restart-btn:hover {
+            background: #5a0012;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .progress {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .score-circle {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--uom-maroon);
+            margin: 20px 0;
+        }
+
+        .summary h2 {
+            color: var(--uom-maroon);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>IDSc 3013 Quiz</h1>
+        <div>Supertype/Subtype Relationships</div>
+    </header>
+
+    <div id="quiz-container" class="quiz-card">
+        <div id="question-area">
+            <div id="erd-container" class="erd-box" style="display:none"></div>
+            <div class="question-text" id="question-text">Loading...</div>
+            <div class="options" id="options-container"></div>
+            <div id="feedback"></div>
+            <div style="text-align: right;">
+                <button id="next-btn">Next Question &rarr;</button>
+            </div>
+        </div>
+
+        <div id="result-area" class="summary" style="display:none">
+            <h2>Quiz Complete!</h2>
+            <div class="score-circle" id="final-score">0/0</div>
+            <p id="score-message"></p>
+            <button id="restart-btn" style="display:inline-block">Restart Quiz</button>
+        </div>
+
+        <div class="progress" id="progress-text">Question 1 of 8</div>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "What is a supertype in supertype/subtype modeling?",
+            options: [
+                "The most important entity in the database",
+                "A generic entity containing attributes common to all subtypes",
+                "An entity with more attributes than other entities",
+                "The first entity created in a database design"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! A supertype is the generic entity that contains attributes shared by ALL subtypes. For example, EMPLOYEE (supertype) contains Name, Address, Phone—attributes that ALL employee types share.",
+                incorrect: [
+                    "Importance isn't the issue. Supertype refers to the generalization—the broader category.",
+                    "Supertypes often have FEWER attributes than the combined subtypes because they only contain COMMON attributes.",
+                    "Creation order doesn't determine supertypes. A supertype is defined by its role as a generalization."
+                ]
+            }
+        },
+        {
+            question: "A bank has different account types: CHECKING, SAVINGS, and CREDIT. All accounts have Account_Number, Balance, and Date_Opened. Each type has unique attributes. How should this be modeled?",
+            options: [
+                "One ACCOUNT table with columns for all possible attributes",
+                "Three separate tables: CHECKING, SAVINGS, CREDIT with no connection",
+                "ACCOUNT supertype with CHECKING, SAVINGS, and CREDIT subtypes",
+                "An associative entity connecting different account types"
+            ],
+            answer: 2,
+            feedback: {
+                correct: "Correct! ACCOUNT should be the supertype containing common attributes. CHECKING, SAVINGS, and CREDIT should be subtypes containing type-specific attributes to avoid NULL values.",
+                incorrect: [
+                    "This creates a NULL-heavy table. A checking account would have NULL for interest_rate and credit_limit.",
+                    "You'd lose the common attributes! Account_Number and Balance would be duplicated across all three tables.",
+                    "Associative entities are for M:N relationships. This is a specialization relationship."
+                ]
+            }
+        },
+        {
+            question: "Question 3 (Understanding Discriminators)\nIn a supertype/subtype relationship, what is the purpose of a subtype discriminator?",
+            options: [
+                "To ensure that all subtypes have the same primary key",
+                "An attribute in the supertype that determines which subtype an instance belongs to",
+                "A unique identifier used only by the subtypes",
+                "A rule that prevents subtypes from having their own attributes"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! A subtype discriminator is an attribute added to the supertype to indicate which subtype an entity instance belongs to (e.g., an 'Account_Type' attribute with values 'C', 'S', or 'R').",
+                incorrect: [
+                    "Primary keys are handled by identity inheritance, not the discriminator.",
+                    "Subtypes always have their own unique identifiers or shared PKs, but the discriminator is a separate attribute for classification.",
+                    "The discriminator is a rule/attribute that facilitates categorization, it doesn't limit the subtypes' own attributes."
+                ]
+            }
+        },
+        {
+            question: "Look at this ERD diagram and identify what the 'd' means:",
+            erd: "     EMPLOYEE\n        │\n        d\n    ┌───┼───┐\n  HOURLY  SALARIED",
+            options: [
+                "An employee must be in both subtypes",
+                "An employee can be in both subtypes",
+                "An employee can be in ONLY ONE subtype",
+                "An employee doesn't need to be in any subtype"
+            ],
+            answer: 2,
+            feedback: {
+                correct: "Correct! The 'd' stands for DISJOINT, meaning mutually exclusive. An employee is EITHER hourly OR salaried, not both.",
+                incorrect: [
+                    "That's the opposite! Disjoint means you can be in ONLY ONE subtype.",
+                    "That would be OVERLAPPING (marked with 'o').",
+                    "That's about partial vs. total specialization, not disjoint vs. overlapping."
+                ]
+            }
+        },
+        {
+            question: "A university tracks PERSON with subtypes EMPLOYEE, STUDENT, and ALUMNUS. A graduate student can be both STUDENT and EMPLOYEE. Should this be disjoint or overlapping?",
+            options: [
+                "Disjoint (d) - A person can be only one type",
+                "Overlapping (o) - A person can be multiple types",
+                "Neither constraint is needed",
+                "It depends on the person's age"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! This should be OVERLAPPING (o) because one person can have multiple roles simultaneously, such as a student who is also a teaching assistant.",
+                incorrect: [
+                    "Disjoint would prevent someone from being both a student AND an employee, which happens often in universities.",
+                    "You always need to specify disjoint or overlapping as it dictates business logic.",
+                    "Age is irrelevant to the structural relationship of entities."
+                ]
+            }
+        },
+        {
+            question: "What's the difference between total and partial specialization?",
+            options: [
+                "Total means more subtypes than partial",
+                "Total means every supertype instance MUST be in a subtype; Partial means instances MAY NOT be in any subtype",
+                "Total means the supertype has all attributes; Partial means subtypes have most attributes",
+                "Total means disjoint; Partial means overlapping"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! TOTAL specialization (double lines) requires every supertype instance to belong to a subtype. PARTIAL (single line) allows instances to exist only at the supertype level.",
+                incorrect: [
+                    "The number of subtypes is irrelevant to the specialization constraint.",
+                    "This refers to attribute distribution, not instance membership.",
+                    "These are two different types of constraints. Line style (Total/Partial) is independent of d/o (Disjoint/Overlapping)."
+                ]
+            }
+        },
+        {
+            question: "Why is supertype/subtype better than one table with all possible attributes for different customer types?",
+            options: [
+                "It's not better—one table is simpler",
+                "It eliminates NULLs and clearly separates type-specific attributes",
+                "It makes queries faster",
+                "It's required by law"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! Supertype/subtype eliminates the 'Sparse Table' problem where many columns are NULL because they only apply to a specific type of customer.",
+                incorrect: [
+                    "One table with many NULLs is harder to maintain and compromises data integrity.",
+                    "While performance can vary, the primary driver is data organization and reducing NULL values.",
+                    "Database design is driven by business logic and normalization, not legal requirements."
+                ]
+            }
+        },
+        {
+            question: "Which scenario is BEST suited for supertype/subtype modeling?",
+            options: [
+                "Two entities share 1-2 attributes",
+                "Different types share many attributes but have significant type-specific differences",
+                "All instances have exactly the same attributes",
+                "Types change frequently (daily or weekly)"
+            ],
+            answer: 1,
+            feedback: {
+                correct: "Correct! Supertype/subtype works best when there is high commonality but distinct differences in business rules or specific attributes.",
+                incorrect: [
+                    "If they only share 1-2 attributes, they might just be separate entities entirely.",
+                    "If all attributes are the same, you don't need subtypes.",
+                    "High frequency of type changes makes this model difficult to manage; it's best for stable categories."
+                ]
+            }
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const erdContainer = document.getElementById('erd-container');
+    const feedbackArea = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const progressText = document.getElementById('progress-text');
+    const quizArea = document.getElementById('question-area');
+    const resultArea = document.getElementById('result-area');
+    const finalScore = document.getElementById('final-score');
+    const scoreMessage = document.getElementById('score-message');
+    const restartBtn = document.getElementById('restart-btn');
+
+    function loadQuestion() {
+        answered = false;
+        const data = quizData[currentQuestion];
+        
+        questionText.innerHTML = data.question.replace(/\n/g, '<br>');
+        optionsContainer.innerHTML = '';
+        feedbackArea.style.display = 'none';
+        nextBtn.style.display = 'none';
+        
+        if (data.erd) {
+            erdContainer.style.display = 'block';
+            erdContainer.textContent = data.erd;
+        } else {
+            erdContainer.style.display = 'none';
+        }
+
+        data.options.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = option;
+            btn.onclick = () => selectOption(index);
+            optionsContainer.appendChild(btn);
+        });
+
+        progressText.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+    }
+
+    function selectOption(index) {
+        if (answered) return;
+        answered = true;
+
+        const data = quizData[currentQuestion];
+        const buttons = optionsContainer.getElementsByClassName('option-btn');
+        
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        if (index === data.answer) {
+            buttons[index].classList.add('correct');
+            feedbackArea.innerHTML = `<strong>Correct!</strong><br>${data.feedback.correct}`;
+            feedbackArea.style.borderColor = "var(--correct)";
+            feedbackArea.style.backgroundColor = "#f0fdf4";
+            feedbackArea.style.color = "#16a34a";
+            score++;
+        } else {
+            buttons[index].classList.add('incorrect');
+            buttons[data.answer].classList.add('correct');
+            
+            let feedbackIndex = index;
+            if (index > data.answer) feedbackIndex--;
+            
+            const msg = data.feedback.incorrect[feedbackIndex] || "Incorrect.";
+            feedbackArea.innerHTML = `<strong>Not quite.</strong><br>${msg}`;
+            feedbackArea.style.borderColor = "var(--incorrect)";
+            feedbackArea.style.backgroundColor = "#fef2f2";
+            feedbackArea.style.color = "#dc2626";
+        }
+
+        feedbackArea.style.display = 'block';
+        nextBtn.style.display = 'inline-block';
+        
+        if (currentQuestion === quizData.length - 1) {
+            nextBtn.textContent = "Finish Quiz";
+        }
+    }
+
+    nextBtn.onclick = () => {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    };
+
+    function showResults() {
+        quizArea.style.display = 'none';
+        resultArea.style.display = 'block';
+        progressText.style.display = 'none';
+        
+        finalScore.textContent = `${score} / ${quizData.length}`;
+        
+        const percentage = (score / quizData.length) * 100;
+        if (percentage === 100) {
+            scoreMessage.textContent = "Ski-U-Mah! Perfect score!";
+        } else if (percentage >= 70) {
+            scoreMessage.textContent = "Good job! You've mastered most of these database concepts.";
+        } else {
+            scoreMessage.textContent = "Keep studying the ERD notation and business rules!";
+        }
+    }
+
+    restartBtn.onclick = () => {
+        currentQuestion = 0;
+        score = 0;
+        quizArea.style.display = 'block';
+        resultArea.style.display = 'none';
+        progressText.style.display = 'block';
+        nextBtn.textContent = "Next Question \u2192";
+        loadQuestion();
+    };
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
