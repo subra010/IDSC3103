@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDSC 3103: Advanced Cardinality Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-card:hover { transform: translateY(-2px); transition: all 0.2s; }
+        .progress-bar { transition: width 0.4s ease-in-out; }
+        .math-font { font-family: 'Courier New', Courier, monospace; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col items-center p-4 md:p-8">
+
+    <div id="app" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-800 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold italic">IDSC 3103</h1>
+            <h2 class="text-xl font-semibold">Business Cardinality Practice</h2>
+            <p class="text-blue-100 mt-1 text-sm">Practice Part 3: Semantic Expressions</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-200 h-2">
+            <div id="progress" class="progress-bar bg-blue-500 h-full w-0"></div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="p-6 md:p-10">
+            <div id="question-area">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-number" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Case 1 of 6</span>
+                    <span id="category-tag" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase">Scenario</span>
+                </div>
+                
+                <div class="bg-slate-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p id="scenario-text" class="text-lg leading-relaxed italic text-slate-700"></p>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-sm font-bold text-slate-500 mb-2 uppercase">Required Semantic Format:</p>
+                    <p id="expression-target" class="text-xl font-mono font-bold text-indigo-700 bg-indigo-50 p-3 rounded text-center border border-indigo-100"></p>
+                </div>
+
+                <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="feedback" class="hidden mt-8 p-5 rounded-xl border-2">
+                <p id="feedback-text" class="font-medium"></p>
+                <button onclick="nextQuestion()" class="mt-4 w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-lg transition">
+                    Next Scenario
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-container" class="hidden p-10 text-center">
+            <h2 class="text-3xl font-bold mb-2">Practice Complete!</h2>
+            <p class="text-slate-500 mb-6 text-lg">Your score for this attempt:</p>
+            <div class="text-6xl font-black text-blue-700 mb-8" id="final-score">0/0</div>
+            <button onclick="restartQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-10 rounded-xl transition shadow-xl">
+                Reset Scenarios
+            </button>
+        </div>
+    </div>
+
+    <footer class="mt-8 text-slate-400 text-xs text-center uppercase tracking-tighter">
+        Derived from: IDSC 3103 ERD Text Representation Guide
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                scenario: "A CUSTOMER might browse the site without buying anything, but if they place an ORDER, that order must belong to exactly one customer.",
+                expression: "CUSTOMER places ORDER",
+                options: [
+                    { text: "(0,N):(1,1)", correct: true, reason: "Correct! Customer is optional (0,N) because they might buy nothing. Order is mandatory (1,1) because it must belong to exactly one customer." },
+                    { text: "(1,1):(0,N)", correct: false, reason: "Incorrect. The first pair belongs to CUSTOMER (the entity performing the action)." },
+                    { text: "(1,N):(1,1)", correct: false, reason: "Incorrect. 'Might browse without buying' means the customer's minimum is 0, not 1." },
+                    { text: "(0,1):(1,1)", correct: false, reason: "Incorrect. A customer can place 'many' orders (N), not just one (1)." }
+                ]
+            },
+            {
+                scenario: "A popular FACEBOOK_POST can be 'liked' by many USERs. However, some posts get zero likes. A user can like many posts, or choose not to like any at all.",
+                expression: "USER likes FACEBOOK_POST",
+                options: [
+                    { text: "(0,N):(0,N)", correct: true, reason: "Correct! Both sides are optional (0) and both can be many (N). This is a standard M:N relationship with optional participation." },
+                    { text: "(1,N):(1,N)", correct: false, reason: "Incorrect. This would mean every user MUST like a post and every post MUST have a like." },
+                    { text: "(0,1):(0,1)", correct: false, reason: "Incorrect. This would mean a user can only like one post total." },
+                    { text: "(0,N):(1,N)", correct: false, reason: "Incorrect. The scenario states some posts get zero likes, so the Post's minimum must be 0." }
+                ]
+            },
+            {
+                scenario: "In a warehouse, an ITEM might not appear on any ORDER_LINE if it hasn't been sold yet. However, an ORDER_LINE must specify exactly one ITEM.",
+                expression: "ITEM appears_on ORDER_LINE",
+                options: [
+                    { text: "(0,N):(1,1)", correct: true, reason: "Correct! Item is optional (0,N) on order lines. The Order Line itself is a record of a sale, so it MUST reference exactly one Item (1,1)." },
+                    { text: "(1,1):(0,N)", correct: false, reason: "Incorrect. Swapped. The Item side comes first in this expression." },
+                    { text: "(0,1):(1,1)", correct: false, reason: "Incorrect. An item can appear on 'many' order lines (N) over time." },
+                    { text: "(1,N):(1,1)", correct: false, reason: "Incorrect. 'Might not appear' indicates a minimum of 0." }
+                ]
+            },
+            {
+                scenario: "In a digital marketing campaign, a CLICK_THROUGH must be generated by exactly one ADVERTISEMENT. An advertisement can generate many clicks, or unfortunately, none at all.",
+                expression: "ADVERTISEMENT generates CLICK_THROUGH",
+                options: [
+                    { text: "(0,N):(1,1)", correct: true, reason: "Correct! The Ad is the first entity; it's optional (0,N) because it might get zero clicks. The Click itself must have a source (1,1)." },
+                    { text: "(1,1):(0,N)", correct: false, reason: "Incorrect. Swapped. The Ad is the 'one' side that can have 'many' clicks." },
+                    { text: "(1,N):(1,1)", correct: false, reason: "Incorrect. Ads can have zero clicks." },
+                    { text: "(0,1):(1,N)", correct: false, reason: "Incorrect. This implies a click can come from many ads." }
+                ]
+            },
+            {
+                scenario: "An ONLINE_RETAILER ships many PACKAGES. Every package must be handled by exactly one COURIER. A courier might be new and hasn't handled any packages yet, or they could handle hundreds.",
+                expression: "COURIER handles PACKAGE",
+                options: [
+                    { text: "(0,N):(1,1)", correct: true, reason: "Correct! Courier is the subject. A courier can have zero to many packages. A package MUST have one courier." },
+                    { text: "(1,N):(1,1)", correct: false, reason: "Incorrect. 'New courier' implies they might have zero packages (min 0)." },
+                    { text: "(0,1):(1,1)", correct: false, reason: "Incorrect. Couriers usually handle 'many' packages, not just one." },
+                    { text: "(1,1):(0,N)", correct: false, reason: "Incorrect. Swapped order." }
+                ]
+            },
+            {
+                scenario: "In a SaaS system, a SUBSCRIPTION_PLAN must have at least one SUBSCRIBER to be considered active. A SUBSCRIBER must be signed up for exactly one plan at any given time.",
+                expression: "SUBSCRIPTION_PLAN has SUBSCRIBER",
+                options: [
+                    { text: "(1,N):(1,1)", correct: true, reason: "Correct! Plan must have 1-to-many (1,N). Subscriber must have exactly one (1,1)." },
+                    { text: "(0,N):(1,1)", correct: false, reason: "Incorrect. The scenario states a plan MUST have at least one subscriber to be active." },
+                    { text: "(1,1):(1,N)", correct: false, reason: "Incorrect. Swapped. The plan has many subscribers; the subscriber has one plan." },
+                    { text: "(1,N):(0,1)", correct: false, reason: "Incorrect. 'Subscriber must be signed up' means they can't have 0 plans." }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        const questionNumberEl = document.getElementById('question-number');
+        const scenarioTextEl = document.getElementById('scenario-text');
+        const expressionTargetEl = document.getElementById('expression-target');
+        const optionsGridEl = document.getElementById('options-grid');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedback-text');
+        const progressEl = document.getElementById('progress');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const categoryTagEl = document.getElementById('category-tag');
+
+        function loadQuestion() {
+            canAnswer = true;
+            feedbackEl.classList.add('hidden');
+            const data = quizData[currentQuestion];
+            
+            questionNumberEl.innerText = `Case ${currentQuestion + 1} of ${quizData.length}`;
+            scenarioTextEl.innerText = data.scenario;
+            expressionTargetEl.innerText = data.expression + " ... ?";
+            
+            optionsGridEl.innerHTML = '';
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-card w-full text-center p-4 rounded-xl border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 font-mono text-xl font-bold transition";
+                btn.innerText = opt.text;
+                btn.onclick = () => handleAnswer(idx);
+                optionsGridEl.appendChild(btn);
+            });
+
+            progressEl.style.width = `${(currentQuestion / quizData.length) * 100}%`;
+        }
+
+        function handleAnswer(index) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const selected = quizData[currentQuestion].options[index];
+            const buttons = optionsGridEl.querySelectorAll('button');
+            
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (quizData[currentQuestion].options[i].correct) {
+                    btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+                }
+            });
+
+            if (selected.correct) {
+                score++;
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.className = "mt-8 p-5 rounded-xl border-2 border-emerald-200 bg-emerald-50";
+                feedbackTextEl.innerHTML = `<span class="text-emerald-700 font-bold">✅ Correct!</span><br>${selected.reason}`;
+            } else {
+                buttons[index].classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.className = "mt-8 p-5 rounded-xl border-2 border-red-200 bg-red-50";
+                feedbackTextEl.innerHTML = `<span class="text-red-700 font-bold">❌ Incorrect</span><br>${selected.reason}`;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            progressEl.style.width = "100%";
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            loadQuestion();
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
