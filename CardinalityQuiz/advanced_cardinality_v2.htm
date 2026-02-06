@@ -1,0 +1,304 @@
+import React, { useState, useEffect } from 'react';
+import { CheckCircle2, XCircle, ChevronRight, ChevronLeft, RotateCcw, Award, BookOpen } from 'lucide-react';
+
+const App = () => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
+
+  const questions = [
+    {
+      question: "Which of the following is the correct way to represent a Multivalued Attribute in the IDSc 3103 standard text format?",
+      options: [
+        "Attribute_Name (PK)",
+        "(Attribute_Name)",
+        "{Attribute_Name}",
+        "[Attribute_Name]"
+      ],
+      answer: 2,
+      explanation: "According to the guide, multivalued attributes are shown with {curly braces} around the entire attribute name."
+    },
+    {
+      question: "In the context of Supertype/Subtype structures, what does a 'Disjoint' constraint imply?",
+      options: [
+        "An instance of a supertype can belong to multiple subtypes simultaneously.",
+        "An instance of a supertype can belong to at most one subtype.",
+        "A subtype cannot have its own specific attributes.",
+        "The supertype must always be an associative entity."
+      ],
+      answer: 1,
+      explanation: "Disjoint means an entity instance can be a member of at most one subtype."
+    },
+    {
+      question: "How should a Composite Attribute be formatted in the text representation?",
+      options: [
+        "Attribute_Name {Component1, Component2}",
+        "Attribute_Name (Component1, Component2)",
+        "Attribute_Name [PK]",
+        "Attribute_Name <Component1, Component2>"
+      ],
+      answer: 1,
+      explanation: "Composite attributes are shown with the main attribute name followed by its components in (regular parentheses)."
+    },
+    {
+      question: "What is the standard notation for a Primary Key in this format?",
+      options: [
+        "Attribute_Name {PK}",
+        "Attribute_Name (FK)",
+        "Attribute_Name (PK)",
+        "*Attribute_Name"
+      ],
+      answer: 2,
+      explanation: "Primary keys are explicitly marked with (PK) following the attribute name."
+    },
+    {
+      question: "True or False: In a conceptual ERD text representation for IDSc 3103, Associative Entities are usually listed in a separate Part 4 section.",
+      options: [
+        "True",
+        "False"
+      ],
+      answer: 0,
+      explanation: "While the guide notes they aren't always 'needed' in conceptual ERDs compared to logical ones, Part 4 is designated for Associative Entities."
+    },
+    {
+      question: "When describing a relationship, which information is required according to the guide?",
+      options: [
+        "Only the names of the two entities.",
+        "Entity names, Cardinalities (Min, Max), and the Relationship Name.",
+        "The SQL code to create the relationship.",
+        "The data types of the foreign keys."
+      ],
+      answer: 1,
+      explanation: "A complete relationship description includes the entity names, the verb/relationship name, and the minimum/maximum cardinalities for both sides."
+    },
+    {
+      question: "In the Subtype structure format, what follows the symbol '⊳'?",
+      options: [
+        "The Supertype Name",
+        "The Subtype Name",
+        "The Primary Key",
+        "The Relationship Cardinality"
+      ],
+      answer: 1,
+      explanation: "The format uses '⊳ SUBTYPE_NAME (Disjoint/Overlap)' to list the members of a hierarchy."
+    },
+    {
+      question: "What is a 'Subtype Discriminator'?",
+      options: [
+        "A unique ID for the subtype.",
+        "An attribute in the supertype that determines which subtype an instance belongs to.",
+        "A foreign key pointing to the supertype.",
+        "The name of the relationship between subtypes."
+      ],
+      answer: 1,
+      explanation: "The discriminator is the attribute used to differentiate between different subtype instances."
+    },
+    {
+      question: "How is a Unary Relationship described in the guide?",
+      options: [
+        "As a relationship between two different versions of the same table.",
+        "An entity related to itself (e.g., EMPLOYEE manages EMPLOYEE).",
+        "A relationship that has no attributes.",
+        "A relationship between three entities."
+      ],
+      answer: 1,
+      explanation: "A unary relationship involves a single entity type related to itself."
+    },
+    {
+      question: "Which section of the ERD text template is used for 'Key Assumptions'?",
+      options: [
+        "Part 1",
+        "Part 3",
+        "Part 5",
+        "Part 2"
+      ],
+      answer: 2,
+      explanation: "Part 5 is dedicated to Key Assumptions to clarify business rules not explicitly shown in the structural notation."
+    }
+  ];
+
+  const handleAnswerClick = (index) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(index);
+    const correct = index === questions[currentQuestion].answer;
+    setIsCorrect(correct);
+    if (correct) setScore(score + 1);
+  };
+
+  const nextQuestion = () => {
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowScore(true);
+    }
+  };
+
+  const resetQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowScore(false);
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+  };
+
+  const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
+
+  // University Colors
+  const maroon = "#7A0019";
+  const gold = "#FFCC33";
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 font-sans">
+      {/* Header */}
+      <div className="max-w-2xl w-full mb-8 text-center">
+        <div 
+          className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-3"
+          style={{ backgroundColor: gold, color: maroon }}
+        >
+          IDSc 3103
+        </div>
+        <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
+          Conceptual ERD Design Quiz
+        </h1>
+        <p className="text-gray-600">Standardized Semantic Format Mastery</p>
+      </div>
+
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        {!showScore ? (
+          <>
+            {/* Progress Bar */}
+            <div className="h-2 w-full bg-gray-100">
+              <div 
+                className="h-full transition-all duration-500 ease-out"
+                style={{ width: `${progressPercentage}%`, backgroundColor: maroon }}
+              />
+            </div>
+
+            <div className="p-8">
+              {/* Question Header */}
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+                  Question {currentQuestion + 1} of {questions.length}
+                </span>
+                <span className="flex items-center gap-1 text-sm font-medium text-gray-500">
+                  <BookOpen size={16} /> Concepts
+                </span>
+              </div>
+
+              {/* Question Text */}
+              <h2 className="text-xl font-bold text-gray-800 mb-8 leading-relaxed">
+                {questions[currentQuestion].question}
+              </h2>
+
+              {/* Options */}
+              <div className="space-y-3">
+                {questions[currentQuestion].options.map((option, index) => {
+                  let buttonStyle = "border-gray-200 hover:border-maroon/30 hover:bg-gray-50";
+                  let icon = null;
+
+                  if (selectedAnswer !== null) {
+                    if (index === questions[currentQuestion].answer) {
+                      buttonStyle = "border-green-500 bg-green-50 text-green-700 shadow-sm";
+                      icon = <CheckCircle2 className="text-green-500" size={20} />;
+                    } else if (index === selectedAnswer) {
+                      buttonStyle = "border-red-500 bg-red-50 text-red-700 shadow-sm";
+                      icon = <XCircle className="text-red-500" size={20} />;
+                    } else {
+                      buttonStyle = "border-gray-100 opacity-50";
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerClick(index)}
+                      disabled={selectedAnswer !== null}
+                      className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-200 flex justify-between items-center font-medium ${buttonStyle}`}
+                    >
+                      <span>{option}</span>
+                      {icon}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Feedback & Navigation */}
+              {selectedAnswer !== null && (
+                <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                  <div className={`p-4 rounded-xl mb-6 border ${isCorrect ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                    <p className={`text-sm leading-relaxed ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
+                      <span className="font-bold uppercase mr-2">{isCorrect ? 'Correct!' : 'Incorrect'}</span>
+                      {questions[currentQuestion].explanation}
+                    </p>
+                  </div>
+                  
+                  <button
+                    onClick={nextQuestion}
+                    style={{ backgroundColor: maroon }}
+                    className="w-full text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-maroon/20"
+                  >
+                    {currentQuestion + 1 === questions.length ? "Finish Quiz" : "Next Question"}
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Results Screen */
+          <div className="p-12 text-center">
+            <div 
+              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"
+              style={{ backgroundColor: `${maroon}15` }}
+            >
+              <Award size={48} style={{ color: maroon }} />
+            </div>
+            
+            <h2 className="text-3xl font-black text-gray-900 mb-2">Quiz Complete!</h2>
+            <p className="text-gray-500 mb-8 font-medium">Your understanding of ERD text formatting:</p>
+            
+            <div className="bg-gray-50 rounded-3xl p-8 mb-10 border border-gray-100">
+              <div className="text-6xl font-black mb-2" style={{ color: maroon }}>
+                {Math.round((score / questions.length) * 100)}%
+              </div>
+              <p className="text-gray-600 font-bold uppercase tracking-widest text-sm">
+                Score: {score} / {questions.length}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={resetQuiz}
+                className="flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-600 py-4 rounded-xl font-bold hover:bg-gray-50 transition-all"
+              >
+                <RotateCcw size={20} />
+                Try Again
+              </button>
+              <button
+                onClick={() => window.print()}
+                style={{ backgroundColor: gold, color: maroon }}
+                className="flex items-center justify-center gap-2 py-4 rounded-xl font-bold hover:opacity-90 transition-all shadow-md"
+              >
+                Save Results
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <footer className="mt-12 text-gray-400 text-sm flex flex-col items-center gap-2">
+        <p className="font-medium tracking-tight">University of Maroon and Gold • IDSc 3103</p>
+        <div className="flex gap-4">
+          <div className="w-8 h-1 rounded-full" style={{ backgroundColor: maroon }}></div>
+          <div className="w-8 h-1 rounded-full" style={{ backgroundColor: gold }}></div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
