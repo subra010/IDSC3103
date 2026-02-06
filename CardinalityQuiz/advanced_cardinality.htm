@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMN IDSC 3103: Advanced ERD Quiz</title>
+    <title>UMN IDSC 3103: Data Modeling and Databases Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* UMN Official-style Colors */
         :root {
             --umn-maroon: #7a0019;
             --umn-gold: #ffcc33;
@@ -17,12 +16,9 @@
         .border-umn-maroon { border-color: var(--umn-maroon); }
         .bg-umn-gold { background-color: var(--umn-gold); }
         .text-umn-gold { color: var(--umn-gold); }
-        .border-umn-gold { border-color: var(--umn-gold); }
         
         .option-card:hover { border-color: var(--umn-maroon); background-color: #fffaf0; }
         .selected { border-color: var(--umn-maroon); background-color: #fdf2f2; ring: 2px; ring-color: var(--umn-maroon); }
-        .correct { border-color: #10b981; background-color: #ecfdf5; }
-        .wrong { border-color: #ef4444; background-color: #fef2f2; }
         
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Open Sans', sans-serif; }
@@ -31,41 +27,44 @@
 <body class="bg-stone-100 min-h-screen">
 
     <!-- UMN Header Banner -->
-    <div class="bg-umn-maroon text-white py-4 shadow-md mb-8">
-        <div class="max-w-3xl mx-auto px-4 flex items-center gap-4">
-            <!-- Hand-drawn SVG Block M -->
-            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 90V10H30L50 45L70 10H90V90H75V35L50 75L25 35V90H10Z" fill="var(--umn-gold)" stroke="white" stroke-width="2"/>
+    <div class="bg-umn-maroon text-white py-6 shadow-xl mb-8 border-b-4 border-umn-gold">
+        <div class="max-w-4xl mx-auto px-6 flex items-center gap-6">
+            <!-- Minnesota Block M -->
+            <svg width="60" height="60" viewBox="0 0 100 100">
+                <path d="M12 88 V12 H36 L50 42 L64 12 H88 V88 H74 V32 L50 68 L26 32 V88 H12Z" 
+                      fill="var(--umn-gold)" 
+                      stroke="white" 
+                      stroke-width="2"/>
             </svg>
             <div>
-                <h1 class="text-xl font-extrabold tracking-tight">IDSC 3103</h1>
-                <p class="text-xs uppercase tracking-widest text-umn-gold font-bold">Information Systems for Business Processes</p>
+                <h1 class="text-2xl font-black tracking-tight leading-none">IDSC 3103</h1>
+                <p class="text-sm uppercase tracking-widest text-umn-gold font-bold mt-1">Data Modeling and Databases</p>
             </div>
         </div>
     </div>
 
     <div class="max-w-3xl mx-auto px-4 pb-20">
-        <!-- Progress Section -->
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-b-4 border-umn-gold">
+        <!-- Progress Tracking -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
             <div class="flex justify-between items-end mb-4">
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800">Advanced ERD Logic</h2>
-                    <p class="text-slate-500 text-sm">Level 2: Mapping & Notation Standards</p>
+                    <h2 class="text-xl font-bold text-slate-800">Database Design Logic</h2>
+                    <p class="text-slate-500 text-xs uppercase font-bold tracking-tighter text-umn-maroon">Carlson School of Management</p>
                 </div>
                 <div class="text-right">
-                    <span id="progress-text" class="text-sm font-bold text-umn-maroon uppercase">Question 1 / 10</span>
+                    <span id="progress-text" class="text-sm font-black text-umn-maroon">Q 1 / 10</span>
                 </div>
             </div>
-            <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-umn-maroon transition-all duration-500" style="width: 10%"></div>
+            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-umn-maroon transition-all duration-700" style="width: 10%"></div>
             </div>
         </div>
 
         <!-- Quiz Area -->
         <div id="quiz-container">
-            <div id="question-box" class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 mb-6 relative overflow-hidden">
+            <div id="question-box" class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 mb-6 relative">
                 <div id="category-label" class="inline-block bg-umn-gold text-umn-maroon text-[10px] font-black uppercase px-2 py-1 rounded mb-4">CATEGORY</div>
-                <h2 id="scenario-text" class="text-xl font-bold text-slate-800 mb-6 leading-tight"></h2>
+                <h2 id="scenario-text" class="text-xl font-bold text-slate-800 mb-6 leading-snug"></h2>
                 
                 <div id="options-list" class="space-y-3">
                     <!-- Options injected here -->
@@ -73,138 +72,138 @@
             </div>
 
             <div class="flex justify-between items-center min-h-[60px]">
-                <div id="feedback" class="font-bold text-lg"></div>
-                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-umn-maroon text-white px-10 py-3.5 rounded-lg font-bold hover:bg-black transition-all shadow-lg active:scale-95 border-b-4 border-red-900">
-                    CONTINUE &rarr;
+                <div id="feedback" class="font-bold text-lg italic"></div>
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-umn-maroon text-white px-10 py-3.5 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-95 border-b-4 border-red-900">
+                    NEXT QUESTION &rarr;
                 </button>
             </div>
         </div>
 
-        <!-- Completion View -->
+        <!-- Final Score View -->
         <div id="score-view" class="hidden bg-white rounded-3xl shadow-2xl p-12 text-center border-t-8 border-umn-maroon">
-            <div class="w-24 h-24 bg-umn-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 90V10H30L50 45L70 10H90V90H75V35L50 75L25 35V90H10Z" fill="var(--umn-maroon)"/>
+            <div class="w-20 h-20 bg-umn-gold rounded-full flex items-center justify-center mx-auto mb-6">
+                 <svg width="40" height="40" viewBox="0 0 100 100">
+                    <path d="M12 88 V12 H36 L50 42 L64 12 H88 V88 H74 V32 L50 68 L26 32 V88 H12Z" fill="var(--umn-maroon)"/>
                 </svg>
             </div>
-            <h2 class="text-4xl font-black text-slate-900 mb-2">Quiz Complete!</h2>
-            <div class="text-6xl font-black text-umn-maroon my-6" id="final-score">0/10</div>
-            <p id="score-message" class="text-slate-600 mb-8 text-lg max-w-md mx-auto italic"></p>
-            <button onclick="location.reload()" class="bg-umn-maroon text-white px-12 py-4 rounded-xl font-bold hover:bg-black transition-all shadow-xl">Restart Session</button>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">Quiz Results</h2>
+            <div class="text-7xl font-black text-umn-maroon my-6 tracking-tighter" id="final-score">0/10</div>
+            <p id="score-message" class="text-slate-600 mb-8 text-lg max-w-sm mx-auto italic leading-relaxed"></p>
+            <button onclick="location.reload()" class="bg-umn-maroon text-white px-12 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl">Try Again</button>
         </div>
     </div>
 
     <script>
         const questions = [
             {
-                category: "Associative Entities",
-                scenario: "A Student can enroll in many Courses, and a Course has many Students. We need to track the 'Grade' for each enrollment. What is the correct text representation for the ENROLLMENT table PK?",
+                category: "Subtype Logic",
+                scenario: "In a Supertype/Subtype hierarchy, what is the conceptual purpose of a 'Subtype Discriminator'?",
                 options: [
-                    "ENROLLMENT: Grade (PK)",
-                    "ENROLLMENT [PK: Student_ID, Course_ID]: Student_ID (FK), Course_ID (FK), Grade",
-                    "ENROLLMENT: Student_ID (FK), Course_ID (FK), Grade (PK)",
-                    "ENROLLMENT: Enrollment_ID (PK), Student_ID, Course_ID"
-                ],
-                correct: 1
-            },
-            {
-                category: "Subtype Notation",
-                scenario: "In the guide, how should a Subtype table (like OUTPATIENT) be represented relative to its parent (PATIENT)?",
-                options: [
-                    "OUTPATIENT: Patient_ID (PK), Checkback_Date",
-                    "OUTPATIENT: Outpatient_ID (PK), Patient_ID (FK)",
-                    "OUTPATIENT [PK: Patient_ID]: Patient_ID (FK → PATIENT), Checkback_Date",
-                    "SUBTYPE OUTPATIENT OF PATIENT: Checkback_Date"
-                ],
-                correct: 2
-            },
-            {
-                category: "Many-to-Many (M:N)",
-                scenario: "In a Library system, a Book can have many Authors and an Author can write many Books. This is an M:N relationship. To resolve this in a relational model, we must:",
-                options: [
-                    "Put Author_ID as a Foreign Key in the BOOK table",
-                    "Put Book_ID as a Foreign Key in the AUTHOR table",
-                    "Create an associative entity (e.g., BOOK_AUTHOR) with a composite primary key",
-                    "Create a 1:1 relationship between them"
-                ],
-                correct: 2
-            },
-            {
-                category: "Supertype Logic",
-                scenario: "If a VEHICLE must be either a CAR or a TRUCK, but cannot be both at the same time, the relationship is:",
-                options: [
-                    "Overlap",
-                    "Disjoint",
-                    "Partial",
-                    "Recursive"
-                ],
-                correct: 1
-            },
-            {
-                category: "Unary (Recursive) Relationships",
-                scenario: "An EMPLOYEE table has a column 'Manager_ID'. If Manager_ID references the Employee_ID in the same table, what is the correct FK notation?",
-                options: [
-                    "Manager_ID (FK → MANAGER)",
-                    "Manager_ID (FK → EMPLOYEE)",
-                    "Employee_ID (FK → MANAGER)",
-                    "Manager_ID (PK, FK)"
-                ],
-                correct: 1
-            },
-            {
-                category: "Cardinality Semantics",
-                scenario: "A 'Mandatory Many' relationship (1,N) means:",
-                options: [
-                    "The entity is optional, but if it exists, there are many",
-                    "There must be at least one, and there can be many",
-                    "There is exactly one and only one",
-                    "The entity cannot exist without its parent"
-                ],
-                correct: 1
-            },
-            {
-                category: "Composite Attributes",
-                scenario: "Based on the guide, how should the composite attribute 'Name' (composed of First and Last) be written under the CUSTOMER entity?",
-                options: [
-                    "- Name {First, Last}",
-                    "- Name (First, Last)",
-                    "- Name [First, Last]",
-                    "- Name: First, Last"
+                    "To store the primary key of the subtype",
+                    "To determine which subtype an instance of the supertype belongs to",
+                    "To link the associative entity to the supertype",
+                    "To ensure that all subtypes have unique names"
                 ],
                 correct: 1
             },
             {
                 category: "Relational Mapping",
-                scenario: "When mapping a 1:N relationship (Department offers Course), where does the Foreign Key (FK) usually go?",
+                scenario: "When converting a 1:N relationship from a conceptual model to a relational table structure, where is the Foreign Key (FK) conceptually placed?",
                 options: [
-                    "In the '1' side (Department table)",
-                    "In the 'N' side (Course table)",
-                    "In a new associative table",
-                    "In both tables"
+                    "In the Parent ('1' side) table to refer to many children",
+                    "In the Child ('N' side) table to refer back to one parent",
+                    "In both tables to ensure a bidirectional link",
+                    "In a separate 'Link' table regardless of cardinality"
                 ],
                 correct: 1
             },
             {
-                category: "Multivalued Attributes",
-                scenario: "A Customer can have multiple Email addresses. In the Relational Model (tables), how is a Multivalued attribute handled?",
+                category: "Subtype Specialization",
+                scenario: "If a business rule states that an Employee must be either a 'Full-Time' or 'Part-Time' worker, but never both, which constraint should be applied?",
                 options: [
-                    "Kept in the same table as a list in one cell",
-                    "Created as multiple columns (Email1, Email2, Email3)",
-                    "Moved to a new table with a FK back to the original entity",
-                    "It is deleted as it is not allowed"
+                    "Overlapping",
+                    "Disjoint",
+                    "Recursive",
+                    "Partial Completeness"
                 ],
-                correct: 2
+                correct: 1
             },
             {
-                category: "Key Assumptions",
-                scenario: "According to Part 5 of the Guide, 'Key Assumptions' are used to:",
+                category: "Attribute Types",
+                scenario: "A 'Multivalued Attribute' (such as {Email}) is conceptually defined as an attribute that:",
                 options: [
-                    "Explain why you chose certain cardinalities or business rules",
-                    "List the names of the students in the group",
-                    "Define the SQL data types for each column",
-                    "Draw the lines for the ERD"
+                    "Contains multiple sub-parts like Street, City, and State",
+                    "May have more than one value for a single entity instance",
+                    "Is calculated based on other attributes in the table",
+                    "Is used as a foreign key in multiple tables"
+                ],
+                correct: 1
+            },
+            {
+                category: "Associative Entities",
+                scenario: "When should a M:N relationship be converted into an Associative Entity in the physical model?",
+                options: [
+                    "Only when the relationship has no attributes of its own",
+                    "Always, because relational databases cannot directly implement M:N relationships",
+                    "Only when the relationship is optional on both sides",
+                    "Never; M:N relationships are handled via simple Foreign Keys in one table"
+                ],
+                correct: 1
+            },
+            {
+                category: "Unary Relationships",
+                scenario: "A 'Recursive' (Unary) relationship exists when:",
+                options: [
+                    "A table has two different primary keys",
+                    "An entity has a relationship with itself (e.g., Employee manages Employee)",
+                    "A subtype has its own subtype hierarchy",
+                    "Two entities are linked by a composite key"
+                ],
+                correct: 1
+            },
+            {
+                category: "Entity Integrity",
+                scenario: "In the context of Primary Keys, the 'Entity Integrity' rule states that:",
+                options: [
+                    "A foreign key must match a primary key in another table",
+                    "A primary key cannot contain a null value",
+                    "An entity must have at least three attributes",
+                    "A subtype must have the same name as its supertype"
+                ],
+                correct: 1
+            },
+            {
+                category: "Degree of Relationships",
+                scenario: "If an 'Order' must include at least one 'Product', but a 'Product' does not necessarily have to be part of any 'Order', the 'Product' side of the relationship has:",
+                options: [
+                    "Mandatory Cardinality",
+                    "Optional Cardinality",
+                    "Binary Cardinality",
+                    "Composite Cardinality"
+                ],
+                correct: 1
+            },
+            {
+                category: "Modeling Strategy",
+                scenario: "In a conceptual ERD, why are Foreign Keys (FKs) generally excluded from the diagram?",
+                options: [
+                    "Because FKs are physical implementation details, not conceptual business rules",
+                    "Because FKs are automatically created by all database software",
+                    "Because PKs already contain the data needed for the FK",
+                    "To save space on the diagram"
                 ],
                 correct: 0
+            },
+            {
+                category: "Business Rules",
+                scenario: "Why is the 'Key Assumptions' section (Part 5 of the guide) critical in a database design project?",
+                options: [
+                    "It lists the names of the database administrators",
+                    "It documents business logic that isn't visually obvious in the ERD itself",
+                    "It contains the SQL 'CREATE TABLE' statements",
+                    "It is used to list all the sample data for the database"
+                ],
+                correct: 1
             }
         ];
 
@@ -217,7 +216,7 @@
             const q = questions[currentQuestion];
             const total = questions.length;
             
-            document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progress-text').innerText = `Q ${currentQuestion + 1} / ${total}`;
             document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / total) * 100}%`;
             document.getElementById('category-label').innerText = q.category;
             document.getElementById('scenario-text').innerText = q.scenario;
@@ -229,8 +228,8 @@
             
             q.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
-                btn.className = "option-card w-full text-left p-4 rounded-xl border-2 border-slate-200 transition-all font-bold text-slate-700 bg-white shadow-sm";
-                btn.innerText = opt;
+                btn.className = "option-card w-full text-left p-4 rounded-xl border-2 border-slate-200 transition-all font-bold text-slate-700 bg-white shadow-sm flex items-start gap-3";
+                btn.innerHTML = `<span class="opacity-30">${String.fromCharCode(65 + index)}.</span> <span>${opt}</span>`;
                 btn.onclick = () => selectOption(index, btn);
                 optionsList.appendChild(btn);
             });
@@ -245,15 +244,15 @@
             
             if (index === correct) {
                 element.classList.replace('border-slate-200', 'border-emerald-500');
-                element.classList.add('bg-emerald-50', 'text-emerald-700', 'ring-2', 'ring-emerald-500');
-                document.getElementById('feedback').innerHTML = "<span class='text-emerald-600'>✓ Correct</span>";
+                element.classList.add('bg-emerald-50', 'text-emerald-800');
+                document.getElementById('feedback').innerHTML = "<span class='text-emerald-600'>Correct Answer!</span>";
                 score++;
             } else {
                 element.classList.replace('border-slate-200', 'border-rose-500');
-                element.classList.add('bg-rose-50', 'text-rose-700', 'ring-2', 'ring-rose-500');
+                element.classList.add('bg-rose-50', 'text-rose-800');
                 options[correct].classList.replace('border-slate-200', 'border-emerald-500');
-                options[correct].classList.add('bg-emerald-50', 'text-emerald-700');
-                document.getElementById('feedback').innerHTML = "<span class='text-rose-600'>✗ Incorrect</span>";
+                options[correct].classList.add('bg-emerald-50', 'text-emerald-800');
+                document.getElementById('feedback').innerHTML = "<span class='text-rose-600'>Incorrect</span>";
             }
             
             document.getElementById('next-btn').classList.remove('hidden');
@@ -274,10 +273,10 @@
             document.getElementById('final-score').innerText = `${score}/${questions.length}`;
             
             let msg = "";
-            if (score === 10) msg = "Ski-U-Mah! Perfect score. You are an ERD Expert.";
-            else if (score >= 8) msg = "Excellent work! You have a strong grasp of IDSC 3103 concepts.";
-            else if (score >= 6) msg = "Good effort. Review the specific FK notation in the guide.";
-            else msg = "Keep studying the ERD Text Representation Guide and try again, Gopher!";
+            if (score === 10) msg = "Ski-U-Mah! Perfect score. Your conceptual understanding of Database Modeling is outstanding!";
+            else if (score >= 8) msg = "Great job, Gopher! You have a strong grasp of business rules and cardinality.";
+            else if (score >= 6) msg = "Decent effort. Consider reviewing the differences between Disjoint and Overlapping constraints.";
+            else msg = "Looks like you need a bit more study time. Review the core concepts of M:N relationships and Subtypes.";
             
             document.getElementById('score-message').innerText = msg;
         }
