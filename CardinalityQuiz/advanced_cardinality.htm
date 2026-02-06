@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced ERD Logic & Notation Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-card:hover { border-color: #6366f1; background-color: #f5f3ff; }
+        .selected { border-color: #6366f1; background-color: #ede9fe; ring: 2px; ring-color: #6366f1; }
+        .correct { border-color: #10b981; background-color: #ecfdf5; }
+        .wrong { border-color: #ef4444; background-color: #fef2f2; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+    <div class="max-w-3xl mx-auto py-10 px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm p-8 mb-8 border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-2">ERD Quiz Level 2: Advanced Logic</h1>
+            <p class="text-slate-600 mb-4">Focusing on Associative Entities, Supertype/Subtypes, and Relational Mapping.</p>
+            <div class="flex items-center gap-4">
+                <div class="text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-md" id="progress-text">Question 1 / 10</div>
+                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Area -->
+        <div id="quiz-container">
+            <div id="question-box" class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100 mb-6 transition-all duration-300">
+                <div id="category-label" class="text-xs font-bold text-indigo-500 uppercase mb-2">Relationship Logic</div>
+                <h2 id="scenario-text" class="text-xl font-bold text-slate-800 mb-6 leading-tight"></h2>
+                <div id="options-list" class="space-y-4">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center min-h-[60px]">
+                <div id="feedback" class="font-bold text-lg"></div>
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 text-white px-10 py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg active:scale-95">Next Challenge &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Completion View -->
+        <div id="score-view" class="hidden bg-white rounded-3xl shadow-2xl p-12 text-center border border-slate-100">
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h2 class="text-4xl font-black text-slate-900 mb-2">Level 2 Complete!</h2>
+            <div class="text-6xl font-black text-indigo-600 my-6" id="final-score">0/10</div>
+            <p id="score-message" class="text-slate-600 mb-8 text-lg max-w-md mx-auto"></p>
+            <button onclick="location.reload()" class="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                category: "Associative Entities",
+                scenario: "A Student can enroll in many Courses, and a Course has many Students. We need to track the 'Grade' for each enrollment. What is the correct text representation for the ENROLLMENT table PK?",
+                options: [
+                    "ENROLLMENT: Grade (PK)",
+                    "ENROLLMENT [PK: Student_ID, Course_ID]: Student_ID (FK), Course_ID (FK), Grade",
+                    "ENROLLMENT: Student_ID (FK), Course_ID (FK), Grade (PK)",
+                    "ENROLLMENT: Enrollment_ID (PK), Student_ID, Course_ID"
+                ],
+                correct: 1
+            },
+            {
+                category: "Subtype Notation",
+                scenario: "In the guide, how should a Subtype table (like OUTPATIENT) be represented relative to its parent (PATIENT)?",
+                options: [
+                    "OUTPATIENT: Patient_ID (PK), Checkback_Date",
+                    "OUTPATIENT: Outpatient_ID (PK), Patient_ID (FK)",
+                    "OUTPATIENT [PK: Patient_ID]: Patient_ID (FK → PATIENT), Checkback_Date",
+                    "SUBTYPE OUTPATIENT OF PATIENT: Checkback_Date"
+                ],
+                correct: 2
+            },
+            {
+                category: "Many-to-Many (M:N)",
+                scenario: "In a Library system, a Book can have many Authors and an Author can write many Books. This is an M:N relationship. To resolve this in a relational model, we must:",
+                options: [
+                    "Put Author_ID as a Foreign Key in the BOOK table",
+                    "Put Book_ID as a Foreign Key in the AUTHOR table",
+                    "Create an associative entity (e.g., BOOK_AUTHOR) with a composite primary key",
+                    "Create a 1:1 relationship between them"
+                ],
+                correct: 2
+            },
+            {
+                category: "Supertype Logic",
+                scenario: "If a VEHICLE must be either a CAR or a TRUCK, but cannot be both at the same time, the relationship is:",
+                options: [
+                    "Overlap",
+                    "Disjoint",
+                    "Partial",
+                    "Recursive"
+                ],
+                correct: 1
+            },
+            {
+                category: "Unary (Recursive) Relationships",
+                scenario: "An EMPLOYEE table has a column 'Manager_ID'. If Manager_ID references the Employee_ID in the same table, what is the correct FK notation?",
+                options: [
+                    "Manager_ID (FK → MANAGER)",
+                    "Manager_ID (FK → EMPLOYEE)",
+                    "Employee_ID (FK → MANAGER)",
+                    "Manager_ID (PK, FK)"
+                ],
+                correct: 1
+            },
+            {
+                category: "Cardinality Semantics",
+                scenario: "A 'Mandatory Many' relationship (1,N) means:",
+                options: [
+                    "The entity is optional, but if it exists, there are many",
+                    "There must be at least one, and there can be many",
+                    "There is exactly one and only one",
+                    "The entity cannot exist without its parent"
+                ],
+                correct: 1
+            },
+            {
+                category: "Composite Attributes",
+                scenario: "Based on the guide, how should the composite attribute 'Name' (composed of First and Last) be written under the CUSTOMER entity?",
+                options: [
+                    "- Name {First, Last}",
+                    "- Name (First, Last)",
+                    "- Name [First, Last]",
+                    "- Name: First, Last"
+                ],
+                correct: 1
+            },
+            {
+                category: "Relational Mapping",
+                scenario: "When mapping a 1:N relationship (Department offers Course), where does the Foreign Key (FK) usually go?",
+                options: [
+                    "In the '1' side (Department table)",
+                    "In the 'N' side (Course table)",
+                    "In a new associative table",
+                    "In both tables"
+                ],
+                correct: 1
+            },
+            {
+                category: "Multivalued Attributes",
+                scenario: "A Customer can have multiple Email addresses. In the Relational Model (tables), how is a Multivalued attribute handled?",
+                options: [
+                    "Kept in the same table as a list in one cell",
+                    "Created as multiple columns (Email1, Email2, Email3)",
+                    "Moved to a new table with a FK back to the original entity",
+                    "It is deleted as it is not allowed"
+                ],
+                correct: 2
+            },
+            {
+                category: "Key Assumptions",
+                scenario: "According to Part 5 of the Guide, 'Key Assumptions' are used to:",
+                options: [
+                    "Explain why you chose certain cardinalities or business rules",
+                    "List the names of the students in the group",
+                    "Define the SQL data types for each column",
+                    "Draw the lines for the ERD"
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestion];
+            const total = questions.length;
+            
+            // UI Updates
+            document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('category-label').innerText = q.category;
+            document.getElementById('scenario-text').innerText = q.scenario;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = "";
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "option-card w-full text-left p-5 rounded-2xl border-2 border-slate-200 transition-all font-semibold text-slate-700 bg-white";
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optionsList.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, element) {
+            if (answered) return;
+            answered = true;
+            
+            const correct = questions[currentQuestion].correct;
+            const options = document.querySelectorAll('.option-card');
+            
+            if (index === correct) {
+                element.classList.replace('border-slate-200', 'border-emerald-500');
+                element.classList.add('bg-emerald-50', 'text-emerald-700', 'ring-2', 'ring-emerald-500');
+                document.getElementById('feedback').innerHTML = "<span class='text-emerald-600'>Excellent! +1 point</span>";
+                score++;
+            } else {
+                element.classList.replace('border-slate-200', 'border-rose-500');
+                element.classList.add('bg-rose-50', 'text-rose-700', 'ring-2', 'ring-rose-500');
+                options[correct].classList.replace('border-slate-200', 'border-emerald-500');
+                options[correct].classList.add('bg-emerald-50', 'text-emerald-700');
+                document.getElementById('feedback').innerHTML = "<span class='text-rose-600'>Not quite.</span>";
+            }
+            
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('score-view').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+            
+            let msg = "";
+            if (score === 10) msg = "Incredible! You have mastered advanced ERD concepts and the IDSC 3103 formatting guide.";
+            else if (score >= 8) msg = "Great job! You have a strong grasp of associative entities and subtype logic.";
+            else if (score >= 6) msg = "Good score. You might want to review the syntax for Foreign Keys and Associative Entities.";
+            else msg = "Take another look at the ERD Text Representation Guide and try again!";
+            
+            document.getElementById('score-message').innerText = msg;
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
