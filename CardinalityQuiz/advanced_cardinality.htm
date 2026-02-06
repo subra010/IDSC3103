@@ -20,42 +20,33 @@
         .option-card:hover { border-color: var(--umn-maroon); background-color: #fffaf0; }
         .selected { border-color: var(--umn-maroon); background-color: #fdf2f2; ring: 2px; ring-color: var(--umn-maroon); }
         
-        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Open Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-stone-100 min-h-screen">
+<body class="bg-stone-50 min-h-screen">
 
-    <!-- UMN Header Banner -->
-    <div class="bg-umn-maroon text-white py-6 shadow-xl mb-8 border-b-4 border-umn-gold">
-        <div class="max-w-4xl mx-auto px-6 flex items-center gap-6">
-            <!-- Minnesota Block M -->
-            <svg width="60" height="60" viewBox="0 0 100 100">
-                <path d="M12 88 V12 H36 L50 42 L64 12 H88 V88 H74 V32 L50 68 L26 32 V88 H12Z" 
-                      fill="var(--umn-gold)" 
-                      stroke="white" 
-                      stroke-width="2"/>
-            </svg>
-            <div>
-                <h1 class="text-2xl font-black tracking-tight leading-none">IDSC 3103</h1>
-                <p class="text-sm uppercase tracking-widest text-umn-gold font-bold mt-1">Data Modeling and Databases</p>
-            </div>
+    <!-- UMN Header Banner (Simplified) -->
+    <div class="bg-umn-maroon text-white py-8 shadow-xl mb-8 border-b-4 border-umn-gold">
+        <div class="max-w-4xl mx-auto px-6">
+            <h1 class="text-3xl font-black tracking-tight leading-none uppercase">IDSC 3103</h1>
+            <p class="text-sm tracking-widest text-umn-gold font-bold mt-2 uppercase">Data Modeling & Databases</p>
         </div>
     </div>
 
     <div class="max-w-3xl mx-auto px-4 pb-20">
         <!-- Progress Tracking -->
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-slate-200">
             <div class="flex justify-between items-end mb-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800">Database Design Logic</h2>
-                    <p class="text-slate-500 text-xs uppercase font-bold tracking-tighter text-umn-maroon">Carlson School of Management</p>
+                    <p class="text-umn-maroon text-xs uppercase font-black tracking-widest mt-1">IDSC 3103</p>
                 </div>
                 <div class="text-right">
                     <span id="progress-text" class="text-sm font-black text-umn-maroon">Q 1 / 10</span>
                 </div>
             </div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div id="progress-bar" class="h-full bg-umn-maroon transition-all duration-700" style="width: 10%"></div>
             </div>
         </div>
@@ -63,7 +54,7 @@
         <!-- Quiz Area -->
         <div id="quiz-container">
             <div id="question-box" class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 mb-6 relative">
-                <div id="category-label" class="inline-block bg-umn-gold text-umn-maroon text-[10px] font-black uppercase px-2 py-1 rounded mb-4">CATEGORY</div>
+                <div id="category-label" class="inline-block bg-umn-gold text-umn-maroon text-[10px] font-black uppercase px-2 py-1 rounded mb-4 tracking-tighter">CATEGORY</div>
                 <h2 id="scenario-text" class="text-xl font-bold text-slate-800 mb-6 leading-snug"></h2>
                 
                 <div id="options-list" class="space-y-3">
@@ -73,23 +64,18 @@
 
             <div class="flex justify-between items-center min-h-[60px]">
                 <div id="feedback" class="font-bold text-lg italic"></div>
-                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-umn-maroon text-white px-10 py-3.5 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-95 border-b-4 border-red-900">
-                    NEXT QUESTION &rarr;
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-umn-maroon text-white px-10 py-3.5 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-95 border-b-4 border-red-900 uppercase tracking-wide text-sm">
+                    Next Question &rarr;
                 </button>
             </div>
         </div>
 
         <!-- Final Score View -->
         <div id="score-view" class="hidden bg-white rounded-3xl shadow-2xl p-12 text-center border-t-8 border-umn-maroon">
-            <div class="w-20 h-20 bg-umn-gold rounded-full flex items-center justify-center mx-auto mb-6">
-                 <svg width="40" height="40" viewBox="0 0 100 100">
-                    <path d="M12 88 V12 H36 L50 42 L64 12 H88 V88 H74 V32 L50 68 L26 32 V88 H12Z" fill="var(--umn-maroon)"/>
-                </svg>
-            </div>
-            <h2 class="text-3xl font-black text-slate-900 mb-2">Quiz Results</h2>
-            <div class="text-7xl font-black text-umn-maroon my-6 tracking-tighter" id="final-score">0/10</div>
-            <p id="score-message" class="text-slate-600 mb-8 text-lg max-w-sm mx-auto italic leading-relaxed"></p>
-            <button onclick="location.reload()" class="bg-umn-maroon text-white px-12 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl">Try Again</button>
+            <h2 class="text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">Quiz Results</h2>
+            <div class="text-8xl font-black text-umn-maroon my-8 tracking-tighter" id="final-score">0/10</div>
+            <p id="score-message" class="text-slate-600 mb-10 text-lg max-w-sm mx-auto italic leading-relaxed"></p>
+            <button onclick="location.reload()" class="bg-umn-maroon text-white px-12 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl uppercase tracking-widest">Restart Quiz</button>
         </div>
     </div>
 
@@ -228,8 +214,8 @@
             
             q.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
-                btn.className = "option-card w-full text-left p-4 rounded-xl border-2 border-slate-200 transition-all font-bold text-slate-700 bg-white shadow-sm flex items-start gap-3";
-                btn.innerHTML = `<span class="opacity-30">${String.fromCharCode(65 + index)}.</span> <span>${opt}</span>`;
+                btn.className = "option-card w-full text-left p-4 rounded-xl border-2 border-slate-200 transition-all font-semibold text-slate-700 bg-white shadow-sm flex items-start gap-3";
+                btn.innerHTML = `<span class="opacity-40 text-xs mt-1 font-black uppercase">${String.fromCharCode(65 + index)}</span> <span>${opt}</span>`;
                 btn.onclick = () => selectOption(index, btn);
                 optionsList.appendChild(btn);
             });
@@ -245,14 +231,14 @@
             if (index === correct) {
                 element.classList.replace('border-slate-200', 'border-emerald-500');
                 element.classList.add('bg-emerald-50', 'text-emerald-800');
-                document.getElementById('feedback').innerHTML = "<span class='text-emerald-600'>Correct Answer!</span>";
+                document.getElementById('feedback').innerHTML = "<span class='text-emerald-600 uppercase text-sm tracking-widest'>Correct!</span>";
                 score++;
             } else {
                 element.classList.replace('border-slate-200', 'border-rose-500');
                 element.classList.add('bg-rose-50', 'text-rose-800');
                 options[correct].classList.replace('border-slate-200', 'border-emerald-500');
                 options[correct].classList.add('bg-emerald-50', 'text-emerald-800');
-                document.getElementById('feedback').innerHTML = "<span class='text-rose-600'>Incorrect</span>";
+                document.getElementById('feedback').innerHTML = "<span class='text-rose-600 uppercase text-sm tracking-widest'>Incorrect</span>";
             }
             
             document.getElementById('next-btn').classList.remove('hidden');
@@ -273,10 +259,10 @@
             document.getElementById('final-score').innerText = `${score}/${questions.length}`;
             
             let msg = "";
-            if (score === 10) msg = "Ski-U-Mah! Perfect score. Your conceptual understanding of Database Modeling is outstanding!";
-            else if (score >= 8) msg = "Great job, Gopher! You have a strong grasp of business rules and cardinality.";
-            else if (score >= 6) msg = "Decent effort. Consider reviewing the differences between Disjoint and Overlapping constraints.";
-            else msg = "Looks like you need a bit more study time. Review the core concepts of M:N relationships and Subtypes.";
+            if (score === 10) msg = "Excellent! You have mastered the conceptual foundations of IDSC 3103.";
+            else if (score >= 8) msg = "Great job! You have a solid understanding of entity relationships and constraints.";
+            else if (score >= 6) msg = "Good effort. You might want to review subtype constraints and cardinality rules.";
+            else msg = "Review the course materials on relationship mapping and entity integrity to improve your score.";
             
             document.getElementById('score-message').innerText = msg;
         }
